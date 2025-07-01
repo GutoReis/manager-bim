@@ -1,12 +1,14 @@
-from uuid import uuid4
-
 from PySide6.QtCore import QDate
 
 class TaskItem():
     """
-    Manage the Task itens for the Gantt chart.
+    Represents a singel task in the Gantt Chart.
+    Encapsutes task data and provides convenient access.
     """
-    def __init__(self, json_data):
+    # A simple static counter for unique IDs
+    _next_id = 0
+
+    def __init__(self, json_data: dict):
         """
         Receives json data with the structure of tasks
         {
@@ -19,7 +21,14 @@ class TaskItem():
             'group': 'foundation'
         }
         """
-        self.id = json_data.get('id', str(uuid4()))
+        if "id" not in json_data and json_data["id"]:
+            self.id = json_data["id"]
+            # Ensure _next_id is always greater than any assigned ID
+            TaskItem._next_id = max(TaskItem._next_id, self.id + 1)
+        else:
+            self.id = TaskItem._next_id
+            TaskItem._next_id += 1
+
         self.name = json_data.get('name', None)
         start_date_str = json_data.get('start', None)
         end_date_str = json_data.get('end', None)
@@ -32,7 +41,7 @@ class TaskItem():
 
         if end_date_str:
             self.end_date = QDate.fromString(end_date_str, 'yyyy-MM-dd')
-        
+
         if not self.start_date.isValid():
             raise ValueError(f"Invalid start date format for task '{self.name}': '{start_date_str}'")
         if not self.end_date.isValid():
@@ -41,7 +50,7 @@ class TaskItem():
             raise ValueError(f"Start date after end date for task '{self.name}'.")
         if self.progress > 1.0 or self.progress < 0.0:
             raise ValueError(f"Progression not between 0.0 and 1.0 for task '{self.name}'")
-        
+
     def get_duration_days(self) -> int:
         """Calculates the duration of the task in days.
         Adds one to final result to include the end date.
@@ -50,3 +59,17 @@ class TaskItem():
             int: Number of days between start and end
         """
         return self.start_date.daysTo(self.end_date) + 1
+
+    def to_dict(self) -> dict:
+        """
+        Converts the TaskItem object to a dictionary.
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'start': self.start_date.toString("yyyy-MM-dd"),
+            'end': self.end_date.toString("yyyy-MM-dd"),
+            'progress': self.progress,
+            'depends_on': self.depends_on,
+            'group': self.group
+        }
