@@ -51,6 +51,32 @@ class TaskItem():
         if self.progress > 1.0 or self.progress < 0.0:
             raise ValueError(f"Progression not between 0.0 and 1.0 for task '{self.name}'")
 
+    def update(self, json_data: dict):
+        """
+        Update the data of a task item.
+        """
+        self.name = json_data.get('name', None)
+        start_date_str = json_data.get('start', None)
+        end_date_str = json_data.get('end', None)
+        self.progress = json_data.get('progress', 0.0)
+        self.depends_on = json_data.get('depends_on', None)
+        self.group = json_data.get('group', None)
+
+        if start_date_str:
+            self.start_date = QDate.fromString(start_date_str, 'yyyy-MM-dd')
+
+        if end_date_str:
+            self.end_date = QDate.fromString(end_date_str, 'yyyy-MM-dd')
+
+        if not self.start_date.isValid():
+            raise ValueError(f"Invalid start date format for task '{self.name}': '{start_date_str}'")
+        if not self.end_date.isValid():
+            raise ValueError(f"Invalid end date format for task '{self.name}': '{end_date_str}'")
+        if self.start_date > self.end_date:
+            raise ValueError(f"Start date after end date for task '{self.name}'.")
+        if self.progress > 1.0 or self.progress < 0.0:
+            raise ValueError(f"Progression not between 0.0 and 1.0 for task '{self.name}'")
+
     def get_duration_days(self) -> int:
         """Calculates the duration of the task in days.
         Adds one to final result to include the end date.
