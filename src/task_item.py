@@ -21,7 +21,7 @@ class TaskItem():
             'group': 'foundation'
         }
         """
-        if "id" not in json_data and json_data["id"]:
+        if "id" in json_data and json_data["id"]:
             self.id = json_data["id"]
             # Ensure _next_id is always greater than any assigned ID
             TaskItem._next_id = max(TaskItem._next_id, self.id + 1)
