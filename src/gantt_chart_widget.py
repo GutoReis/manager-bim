@@ -1,6 +1,6 @@
 from PySide6.QtCore import QDate, QRectF, Qt
 from PySide6.QtGui import QBrush, QColor, QFont, QPen
-from PySide6.QtWidgets import QGraphicsScene, QGraphicsView
+from PySide6.QtWidgets import QGraphicsItem, QGraphicsScene, QGraphicsView
 
 class GanttChartWidget(QGraphicsView):
     """
@@ -56,7 +56,6 @@ class GanttChartWidget(QGraphicsView):
             }
         ]
         """
-        # TODO: REFACTOR THIS SO TASKS BECOME A CLASS
         self.tasks = tasks_data
         self.scene.clear() # Clear existing items
 
@@ -79,16 +78,14 @@ class GanttChartWidget(QGraphicsView):
             self.end_date = QDate.currentDate().addDays(7)
             return
 
-        min_date = QDate.fromString(self.tasks[0]['start'], 'yyyy-MM-dd')
-        max_date = QDate.fromString(self.tasks[-1]['end'], 'yyyy-MM-dd')
+        min_date = self.tasks[0].start_date
+        max_date = self.tasks[0].end_date
 
         for task in self.tasks:
-            start = QDate.fromString(task['start'], 'yyyy-MM-dd')
-            end = QDate.fromString(task['end'], 'yyyy-MM-dd')
-            if start < min_date:
-                min_date = start
-            if end > max_date:
-                max_date = end
+            if task.start_date < min_date:
+                min_date = task.start_date
+            if task.end_date > max_date:
+                max_date = task.end_date
 
         self.start_date = min_date.addDays(-3) # Add a few days buffer at start
         self.end_date = max_date.addDays(3) # Add a few days buffer at the end
@@ -123,29 +120,21 @@ class GanttChartWidget(QGraphicsView):
             # Draw date label
             date_text_item = self.scene.addText(current_date.toString('MMM dd'), date_font)
             date_text_item.setPos(x_pos + 5, 5) # Position slightly offset from line
+            date_text_item.setDefaultTextColor(QColor('black'))
 
             current_date = current_date.addDays(1)
             current_day_offset += 1
 
         # Draw tasks
         for i, task in enumerate(self.tasks):
-            task_name = task.get('name', f'Unnamed Task {i+1}')
-            start_date_str = task.get('start')
-            end_date_str = task.get('end')
-            progress = task.get('progress', 0.0) #0.0 (0%) to 1.0 (100%)
-
-            if not start_date_str or not end_date_str:
-                continue
-
-            start_date = QDate.fromString(start_date_str, 'yyyy-MM-dd')
-            end_date = QDate.fromString(end_date_str, 'yyyy-MM-dd')
-
-            if not start_date.isValid() or not end_date.isValid():
-                continue
+            task_name = task.name
+            start_date = task.start_date
+            end_date = task.end_date
+            progress = task.progress #0.0 (0%) to 1.0 (100%)
 
             # Calculate position and width of the task bar
             x_start = self.start_date.daysTo(start_date) * self.day_width # Define the position on grid of the start of the bar
-            duration_days = start_date.daysTo(end_date) + 1 # Add one to include the end day
+            duration_days = task.get_duration_days() # Add one to include the end day
             bar_width = duration_days * self.day_width
 
             y_pos = (i + 1) * self.row_height # Tasks start below date header
@@ -179,11 +168,41 @@ class GanttChartWidget(QGraphicsView):
 
             # Add task name text
             task_font = QFont('Inter', 9)
-            task_item = self.scene.addText(task_name, task_font)
-            task_item.setPos(
+            text_item = self.scene.addText(task_name, task_font)
+            text_item.setPos(
                 x_start+5,
                 y_pos+10 + (self.row_height-20
-                            - task_item.boundingRect().height()
+                            - text_item.boundingRect().height()
                            ) / 2
             )
-            task_item.setDefaultTextColor(QColor('black'))
+            text_item.setDefaultTextColor(QColor('black'))
+
+            # Store task ID with the graphics item for selection
+            text_item.setData(0, task.id) #Store the task ID in data row 0
+            bar_item = self.scene.addRect(
+                bar_rect,
+                QPen(Qt.NoPen),
+                QBrush(Qt.NoBrush)
+            )
+            bar_item.setData(0, task.id)
+            bar_item.setFlag(QGraphicsItem.ItemIsSelectable) #Make it selectable
+            bar_item.setZValue(1) # Bring to front for selection
+            text_item.setZValue(2) # Text on top of bar
+
+    def mousePressEvent(self, event):
+        """
+        Handle mouse clicks to select task.
+        """
+        item = self.itemAt(event.pos())
+        if item and item.data(0) is not None:
+            # Clear previous selection
+            for selected_item in self.scene.selectedItems():
+                selected_item.setSelected(False)
+            item.setSelected(True)
+            self.selected_task_id = item.data(0)
+            print(f"Selected Task ID: {self.selected_task_id}")
+        else:
+            self.selected_task_id = None
+            for selected_item in self.scene.selectedItems():
+                    selected_item.setSelected(False)
+        super().mousePressEvent(event)
