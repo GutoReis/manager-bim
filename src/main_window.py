@@ -28,11 +28,13 @@ class MainWindow(QMainWindow):
         # Buttons for task management
         button_layout = QHBoxLayout()
         self.open_file_button = QPushButton("Open File")
+        self.save_file_button = QPushButton("Save File")
         self.add_task_button = QPushButton("Add Task")
         self.edit_task_button = QPushButton("Edit Task")
         self.delete_task_button = QPushButton("Delete Task")
 
         button_layout.addWidget(self.open_file_button)
+        button_layout.addWidget(self.save_file_button)
         button_layout.addWidget(self.add_task_button)
         button_layout.addWidget(self.edit_task_button)
         button_layout.addWidget(self.delete_task_button)
@@ -43,6 +45,7 @@ class MainWindow(QMainWindow):
 
         # Connect buttons to methods
         self.open_file_button.clicked.connect(self.open_file)
+        self.save_file_button.clicked.connect(self.save_file)
         self.add_task_button.clicked.connect(self.add_task)
         self.edit_task_button.clicked.connect(self.edit_task)
         self.delete_task_button.clicked.connect(self.delete_task)
@@ -100,6 +103,24 @@ class MainWindow(QMainWindow):
                 f'Erro loading the file {self.filename}. JSON File has no "tasks" key.'
             )
             return
+
+    def save_file(self):
+        """
+        Save the plan as a JSON file.
+
+        If the chart is created as new, no file was opened, then it triggers the save as new.
+        If the chart was opened from a file, or already saved, then it uses the value path from filename.
+        """
+        if not self.filename:
+            self.save_as_new_file()
+            return
+
+        file_data = self.task_manager.export_as_raw_data()
+        with open(self.filename, "w") as file_output:
+            file_output.write(json.dumps(file_data, indent=4))
+
+    def save_as_new_file(self):
+        pass
 
     def refresh_gantt_chart(self):
         """

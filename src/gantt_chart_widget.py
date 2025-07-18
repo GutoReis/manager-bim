@@ -59,8 +59,8 @@ class GanttChartWidget(QGraphicsView):
         self.tasks = tasks_data
         self.scene.clear() # Clear existing items
 
-        if not self.tasks:
-            return
+        # if not self.tasks:
+        #     return
 
         self.calculate_date_range()
         self.draw_chart()

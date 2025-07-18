@@ -78,3 +78,23 @@ class TaskManager():
                 print(f"Error: Missing key in task data: {e} for task {task_dict}")
             except ValueError as e:
                 print(f"Error creating Task object: {e}")
+
+    def export_as_raw_data(self):
+        """
+        Export all the tasks into a JSON in the format.
+        {
+            'tasks': [
+                {
+                    "name": "Project Planning",
+                    "start": "2025-01-01",
+                    "end": "2025-01-15",
+                    "progress": 0.9,
+                    "id": 1001
+                }, ...
+            ]
+        }
+        """
+        tasks_list = list()
+        for task_item in self.get_all_tasks():
+            tasks_list.append(task_item.to_dict())
+        return {"tasks": tasks_list}
