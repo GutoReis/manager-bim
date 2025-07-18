@@ -1,4 +1,9 @@
-from PySide6.QtWidgets import QDialog, QHBoxLayout, QMainWindow, QMessageBox, QPushButton, QVBoxLayout, QWidget
+import json
+from json.decoder import JSONDecodeError
+
+from PySide6.QtWidgets import (QDialog, QFileDialog, QHBoxLayout,
+                               QMainWindow, QMessageBox, QPushButton,
+                               QVBoxLayout, QWidget)
 
 from src.gantt_chart_widget import GanttChartWidget
 from src.task_manager import TaskManager
@@ -10,6 +15,7 @@ class MainWindow(QMainWindow):
     """
     def __init__(self):
         super().__init__()
+        self.filename = "" # Filename to simplify save action (quick save option)
         self.setWindowTitle('ManagerBIM')
         self.setGeometry(100, 100, 1000, 600) # x,y,width,height
 
@@ -21,10 +27,12 @@ class MainWindow(QMainWindow):
 
         # Buttons for task management
         button_layout = QHBoxLayout()
+        self.open_file_button = QPushButton("Open File")
         self.add_task_button = QPushButton("Add Task")
         self.edit_task_button = QPushButton("Edit Task")
         self.delete_task_button = QPushButton("Delete Task")
 
+        button_layout.addWidget(self.open_file_button)
         button_layout.addWidget(self.add_task_button)
         button_layout.addWidget(self.edit_task_button)
         button_layout.addWidget(self.delete_task_button)
@@ -34,12 +42,13 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.gantt_chart_widget)
 
         # Connect buttons to methods
+        self.open_file_button.clicked.connect(self.open_file)
         self.add_task_button.clicked.connect(self.add_task)
         self.edit_task_button.clicked.connect(self.edit_task)
         self.delete_task_button.clicked.connect(self.delete_task)
 
         # TODO: Change to load from file (using button)
-        self.load_sample_data()
+        # self.load_sample_data()
         self.refresh_gantt_chart()
 
     def load_sample_data(self):
@@ -57,6 +66,40 @@ class MainWindow(QMainWindow):
         ]
         # self.gantt_chart_widget.set_tasks(sample_tasks)
         self.task_manager.load_from_raw_data(sample_tasks)
+
+    def open_file(self):
+        """
+        Load a JSON file from system to load the Gantt Chart.
+        """
+        file_data = list()
+        self.filename, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select file",
+            "/",
+            "Json Files (*.json)"
+        )
+
+        try:
+            if self.filename:
+                with open(self.filename, "r") as source_file:
+                    file_data = json.load(source_file)
+            # return file_data["tasks"]
+            self.task_manager.load_from_raw_data(file_data["tasks"])
+            self.refresh_gantt_chart()
+        except JSONDecodeError:
+            QMessageBox.critical(
+                self,
+                "File has no data",
+                f"Erro loading the file {self.filename}. File has no data."
+            )
+            return
+        except KeyError:
+            QMessageBox.critical(
+                self,
+                "File has no tasks",
+                f'Erro loading the file {self.filename}. JSON File has no "tasks" key.'
+            )
+            return
 
     def refresh_gantt_chart(self):
         """
