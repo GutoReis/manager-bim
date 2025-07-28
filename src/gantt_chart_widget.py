@@ -131,6 +131,7 @@ class GanttChartWidget(QGraphicsView):
             start_date = task.start_date
             end_date = task.end_date
             progress = task.progress #0.0 (0%) to 1.0 (100%)
+            progress_str = f"{round(progress, 2) * 100}%"
 
             # Calculate position and width of the task bar
             x_start = self.start_date.daysTo(start_date) * self.day_width # Define the position on grid of the start of the bar
@@ -168,7 +169,10 @@ class GanttChartWidget(QGraphicsView):
 
             # Add task name text
             task_font = QFont('Inter', 9)
-            text_item = self.scene.addText(task_name, task_font)
+            text_item = self.scene.addText(
+                f"{task_name} - {progress_str}",
+                task_font
+            )
             text_item.setPos(
                 x_start+5,
                 y_pos+10 + (self.row_height-20
