@@ -140,6 +140,11 @@ class GanttChartWidget(QGraphicsView):
 
             y_pos = (i + 1) * self.row_height # Tasks start below date header
 
+            # Save the position in task class
+            task.x_position = x_start
+            task.y_position = y_pos
+            task.index = i
+
             # Draw task bar background
             bar_rect = QRectF(
                 x_start,
@@ -173,6 +178,7 @@ class GanttChartWidget(QGraphicsView):
                 f"{task_name} - {progress_str}",
                 task_font
             )
+
             text_item.setPos(
                 x_start+5,
                 y_pos+10 + (self.row_height-20
