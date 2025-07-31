@@ -1,5 +1,5 @@
 from PySide6.QtCore import QDate
-from PySide6.QtWidgets import QDateEdit, QDialog, QDoubleSpinBox, QFormLayout, QHBoxLayout, QLineEdit, QPushButton
+from PySide6.QtWidgets import QComboBox, QDateEdit, QDialog, QDoubleSpinBox, QFormLayout, QHBoxLayout, QLineEdit, QPushButton
 
 from src.task_item import TaskItem
 
@@ -7,7 +7,7 @@ class TaskDialog(QDialog):
     """
     A dialog for creating or editing a task.
     """
-    def __init__(self, parent=None, task: TaskItem | None = None):
+    def __init__(self, current_tasks_list: list, parent=None, task: TaskItem | None = None):
         super().__init__(parent)
         self.setWindowTitle("Task Details")
         self.task = task # Store the task if editing
@@ -23,11 +23,16 @@ class TaskDialog(QDialog):
         self.progress_input.setRange(0.0, 1.0)
         self.progress_input.setSingleStep(0.1)
         self.progress_input.setDecimals(2)
+        self.depends_on_input = QComboBox(self)
+        self.depends_on_input.addItem("None")
+        self.depends_on_input.addItems(current_tasks_list)
 
         self.layout.addRow("Task Name:", self.name_input)
         self.layout.addRow("Start Date:", self.start_date_input)
         self.layout.addRow("End Date:", self.end_date_input)
-        self.layout.addRow("Progress (0.0 - 1.0:", self.progress_input)
+        self.layout.addRow("Progress (0.0 - 1.0):", self.progress_input)
+        self.layout.addRow("Depends on:", self.depends_on_input)
+        print(current_tasks_list)
 
         self.buttons_layout = QHBoxLayout()
         self.save_button = QPushButton("Save", self)

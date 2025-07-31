@@ -151,7 +151,10 @@ class MainWindow(QMainWindow):
         """
         Opens a dialog to add a new task.
         """
-        dialog = TaskDialog(self)
+        dialog = TaskDialog(
+            current_tasks_list=self.task_manager.get_all_tasks_str(),
+            parent=self
+        )
         if dialog.exec() == QDialog.Accepted:
             task_data = dialog.get_task_data()
             new_task = self.task_manager.add_task(task_data)
@@ -185,7 +188,12 @@ class MainWindow(QMainWindow):
             )
             return
 
-        dialog = TaskDialog(self, task=task_to_edit)
+        #dialog = TaskDialog(self, task=task_to_edit)
+        dialog = TaskDialog(
+            current_tasks_list=self.task_manager.get_all_tasks_str(),
+            parent=self,
+            task=task_to_edit
+        )
         if dialog.exec() == QDialog.Accepted:
             task_data = dialog.get_task_data()
             edited = self.task_manager.update_task(selected_task_id, task_data)

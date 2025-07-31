@@ -37,6 +37,12 @@ class TaskManager():
         """
         return list(self._tasks.values())
 
+    def get_all_tasks_str(self) -> list[str]:
+        """
+        Returns a list of all str representation of all tasks
+        """
+        return [str(t) for t in self._tasks.values()]
+
     def update_task(self, task_id: int, task_data: dict) -> bool:
         """
         Updates an existing task.
@@ -89,7 +95,9 @@ class TaskManager():
                     "start": "2025-01-01",
                     "end": "2025-01-15",
                     "progress": 0.9,
-                    "id": 1001
+                    "id": 1001,
+                    "depends_on": [],
+                    "group": "foundation
                 }, ...
             ]
         }
