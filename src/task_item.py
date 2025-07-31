@@ -17,7 +17,7 @@ class TaskItem():
             'start': '2023-01-01',
             'end': '2023-01-10',
             'progress': 0.7,
-            'depends_on': none,
+            'depends_on': [], # List of IDs
             'group': 'foundation'
         }
         """
@@ -35,6 +35,9 @@ class TaskItem():
         self.progress = json_data.get('progress', 0.0)
         self.depends_on = json_data.get('depends_on', None)
         self.group = json_data.get('group', None)
+        self.x_position = None # The X starting position in the gantt chart
+        self.y_position = None # The Y starting position in the gantt chart
+        self.index = None # The position of the task in the gantt chart (position in list of tasks)
 
         if start_date_str:
             self.start_date = QDate.fromString(start_date_str, 'yyyy-MM-dd')
@@ -99,3 +102,6 @@ class TaskItem():
             'depends_on': self.depends_on,
             'group': self.group
         }
+
+    def __str__(self):
+        return f"{self.id} - {self.name}"
