@@ -32,7 +32,6 @@ class TaskDialog(QDialog):
         self.layout.addRow("End Date:", self.end_date_input)
         self.layout.addRow("Progress (0.0 - 1.0):", self.progress_input)
         self.layout.addRow("Depends on:", self.depends_on_input)
-        print(current_tasks_list)
 
         self.buttons_layout = QHBoxLayout()
         self.save_button = QPushButton("Save", self)
@@ -51,6 +50,8 @@ class TaskDialog(QDialog):
             self.start_date_input.setDate(self.task.start_date)
             self.end_date_input.setDate(self.task.end_date)
             self.progress_input.setValue(self.task.progress)
+            if self.task.depends_on:
+                self.depends_on_input.setCurrentText(self.task.depends_on)
         else:
             self.setWindowTitle("Create New Task")
             self.start_date_input.setDate(QDate.currentDate())
@@ -60,11 +61,15 @@ class TaskDialog(QDialog):
         """
         Returns the data entered in the dialog
         """
+        if self.depends_on_input.currentText() == "None":
+            depends_on = None
+        else:
+            depends_on = self.depends_on_input.currentText()
         return {
             'name': self.name_input.text(),
             'start': self.start_date_input.date().toString("yyyy-MM-dd"),
             'end': self.end_date_input.date().toString("yyyy-MM-dd"),
             'progress': self.progress_input.value(),
-            'depends_on': None,
+            'depends_on': depends_on,
             'group': None
         }
