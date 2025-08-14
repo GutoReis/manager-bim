@@ -1,5 +1,5 @@
-from PySide6.QtCore import QDate, QRectF, Qt
-from PySide6.QtGui import QBrush, QColor, QFont, QPen
+from PySide6.QtCore import QDate, QPointF, QRectF, Qt
+from PySide6.QtGui import QBrush, QColor, QFont, QPen, QPolygonF
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsScene, QGraphicsView
 
 class GanttChartWidget(QGraphicsView):
@@ -7,12 +7,13 @@ class GanttChartWidget(QGraphicsView):
     A GraphicView subclass to display a Gantt chart on Freecad.
     It uses a QGraphicScene to manage the graphic items (tasks).
     """
-    def __init__(self, parent=None):
+    def __init__(self, task_manager, parent=None):
         super().__init__(parent)
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
         #self.setRenderHint(Qt.Antialiasing) # For smoother graphics
 
+        self.task_manager = task_manager
         self.tasks = []
         self.start_date = None
         self.end_date = None
@@ -110,6 +111,13 @@ class GanttChartWidget(QGraphicsView):
         date_font = QFont('Inter', 8)
         date_pen = QPen(QColor('#666666'))
 
+        # Arrows for dependency configurations
+        arrow_pen = QPen(
+            QColor("#888888"), # Grey Color
+            1.5 # Medium Thickness
+        )
+        arrow_pen.setCapStyle(Qt.RoundCap) # Rounded end for lines.
+
         current_date = self.start_date
         while current_date <= self.end_date:
             x_pos = current_day_offset * self.day_width
@@ -140,12 +148,15 @@ class GanttChartWidget(QGraphicsView):
 
             y_pos = (i + 1) * self.row_height # Tasks start below date header
 
-            # Save the position in task class
-            task.x_position = x_start
-            task.y_position = y_pos
-            task.index = i
+            # If position is different than the stored on class, save it:
+            if task.x_position is None or task.x_position != x_start:
+                task.x_position = x_start
+            if task.y_position is None or task.y_position != y_pos:
+                task.y_position = y_pos
+            if task.index is None or task.index != i:
+                task.index = i
 
-            # Draw task bar background
+            ### Draw task bar background
             bar_rect = QRectF(
                 x_start,
                 y_pos + 10,
@@ -158,7 +169,7 @@ class GanttChartWidget(QGraphicsView):
                 QBrush(QColor('#ADD8E6'))
             ) # Light blue
 
-            # Draw the progress bar
+            ### Draw the progress bar
             progress_width = bar_width * progress
             progress_rect = QRectF(
                 x_start,
@@ -172,7 +183,7 @@ class GanttChartWidget(QGraphicsView):
                 QBrush(QColor('#4682B4'))
             ) # Steel blue
 
-            # Add task name text
+            ### Add task name text
             task_font = QFont('Inter', 9)
             text_item = self.scene.addText(
                 f"{task_name} - {progress_str}",
@@ -186,6 +197,84 @@ class GanttChartWidget(QGraphicsView):
                            ) / 2
             )
             text_item.setDefaultTextColor(QColor('black'))
+
+            ### Draw the dependency
+            if task.depends_on:
+                print(task.depends_on)
+                # TODO: Create a method in task_item that returns
+                # the dependency data for drawing the dependency
+                dependent_id = int(task.depends_on.split("-")[0].strip())
+                dependent_task = self.task_manager.get_task(dependent_id)
+
+                # Calculate coordinates for the arrow
+                # Arrow starts from the end of the predecessor task bar
+                # Arrow ends at the start of the current task bar
+
+                # Y position to start the line, based on the Y position
+                # of the predecessor task
+                start_y_arrow = dependent_task.y_position + self.row_height / 2
+                # Y position to end the line, based on current task
+                end_y_arrow = y_pos + self.row_height / 2
+
+                # X position to start the line, based on the X position
+                # of the predecessor task, add the bar width to set to the end of the task
+                # start_x_arrow = dependent_task.x_position + bar_width
+                start_x_arrow = (self.start_date.daysTo(dependent_task.end_date) + 1) * self.day_width
+                # X position to start the line, based on current task
+                end_x_arrow = x_start
+
+                # Define the break L-shaped line
+                horizontal_offset = 10
+                vertical_offset = 10
+
+                break_start_x = start_x_arrow + horizontal_offset
+                break_start_y = start_y_arrow
+                break_end_y = end_y_arrow
+                break_end_x = end_x_arrow - horizontal_offset
+
+                # Draw segments
+                # From predecessor task to break
+                self.scene.addLine(
+                    start_x_arrow,
+                    start_y_arrow,
+                    break_start_x,
+                    break_start_y,
+                    arrow_pen
+                )
+                # From start of break to end of break
+                self.scene.addLine(
+                    break_start_x,
+                    break_start_y,
+                    break_end_x,
+                    break_end_y,
+                    arrow_pen
+                )
+                # From break to current task
+                self.scene.addLine(
+                    break_end_x,
+                    break_end_y,
+                    end_x_arrow,
+                    end_y_arrow,
+                    arrow_pen
+                )
+                # Arrowhead
+                arrow_size = 8
+                arrowhead = QPolygonF()
+                arrowhead.append(QPointF(end_x_arrow, end_y_arrow))
+                arrowhead.append(QPointF(
+                    end_x_arrow - arrow_size,
+                    end_y_arrow - arrow_size/2
+                ))
+                arrowhead.append(QPointF(
+                    end_x_arrow - arrow_size,
+                    end_y_arrow + arrow_size/2
+                ))
+                self.scene.addPolygon(
+                    arrowhead,
+                    QPen(arrow_pen.color()),
+                    QBrush(arrow_pen.color())
+                )
+
 
             # Store task ID with the graphics item for selection
             text_item.setData(0, task.id) #Store the task ID in data row 0
