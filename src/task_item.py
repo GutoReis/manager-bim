@@ -17,7 +17,7 @@ class TaskItem():
             'start': '2023-01-01',
             'end': '2023-01-10',
             'progress': 0.7,
-            'depends_on': [], # List of IDs
+            'depends_on': 123, # ID of predecessor task
             'group': 'foundation'
         }
         """
