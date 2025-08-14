@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(central_widget)
 
         # Buttons for task management
+        # # TODO Change this buttons to Toolbar style and place on different file
         button_layout = QHBoxLayout()
         self.open_file_button = QPushButton("Open File")
         self.save_file_button = QPushButton("Save File")
@@ -42,7 +43,7 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(self.delete_task_button)
         layout.addLayout(button_layout)
 
-        self.gantt_chart_widget = GanttChartWidget(self)
+        self.gantt_chart_widget = GanttChartWidget(parent=self, task_manager=self.task_manager)
         layout.addWidget(self.gantt_chart_widget)
 
         # Connect buttons to methods
@@ -53,25 +54,23 @@ class MainWindow(QMainWindow):
         self.edit_task_button.clicked.connect(self.edit_task)
         self.delete_task_button.clicked.connect(self.delete_task)
 
-        # TODO: Change to load from file (using button)
-        # self.load_sample_data()
         self.refresh_gantt_chart()
 
-    def load_sample_data(self):
-        """
-        Loads some sample task data into the Gantt Chart.
-        """
-        sample_tasks = [
-            {'name': 'Project Planning', 'start': '2025-01-01', 'end': '2025-01-15', 'progress': 0.9, 'id': 1001},
-            {'name': 'Requirements Gathering', 'start': '2025-01-10', 'end': '2025-01-25', 'progress': 0.7, 'id': 1002},
-            {'name': 'Design Phase', 'start': '2025-01-20', 'end': '2025-02-10', 'progress': 0.5, 'id': 1003},
-            {'name': 'Development - Module A', 'start': '2025-02-01', 'end': '2025-02-28', 'progress': 0.3, 'id': 1004},
-            {'name': 'Development - Module B', 'start': '2025-02-15', 'end': '2025-03-10', 'progress': 0.0, 'id': 1005},
-            {'name': 'Testing', 'start': '2025-03-01', 'end': '2025-03-20', 'progress': 0.0, 'id': 1006},
-            {'name': 'Deployment', 'start': '2025-03-25', 'end': '2025-03-30', 'progress': 0.0, 'id': 1007},
-        ]
-        # self.gantt_chart_widget.set_tasks(sample_tasks)
-        self.task_manager.load_from_raw_data(sample_tasks)
+    # def load_sample_data(self):
+    #     """
+    #     Loads some sample task data into the Gantt Chart.
+    #     """
+    #     sample_tasks = [
+    #         {'name': 'Project Planning', 'start': '2025-01-01', 'end': '2025-01-15', 'progress': 0.9, 'id': 1001},
+    #         {'name': 'Requirements Gathering', 'start': '2025-01-10', 'end': '2025-01-25', 'progress': 0.7, 'id': 1002},
+    #         {'name': 'Design Phase', 'start': '2025-01-20', 'end': '2025-02-10', 'progress': 0.5, 'id': 1003},
+    #         {'name': 'Development - Module A', 'start': '2025-02-01', 'end': '2025-02-28', 'progress': 0.3, 'id': 1004},
+    #         {'name': 'Development - Module B', 'start': '2025-02-15', 'end': '2025-03-10', 'progress': 0.0, 'id': 1005},
+    #         {'name': 'Testing', 'start': '2025-03-01', 'end': '2025-03-20', 'progress': 0.0, 'id': 1006},
+    #         {'name': 'Deployment', 'start': '2025-03-25', 'end': '2025-03-30', 'progress': 0.0, 'id': 1007},
+    #     ]
+    #     # self.gantt_chart_widget.set_tasks(sample_tasks)
+    #     self.task_manager.load_from_raw_data(sample_tasks)
 
     def open_file(self):
         """
