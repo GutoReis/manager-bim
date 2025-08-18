@@ -65,6 +65,7 @@ class GanttChartWidget(QGraphicsView):
 
         self.calculate_date_range()
         self.draw_chart()
+        self.set_animation_pipe()
 
     def calculate_date_range(self):
         """
@@ -88,8 +89,8 @@ class GanttChartWidget(QGraphicsView):
             if task.end_date > max_date:
                 max_date = task.end_date
 
-        self.start_date = min_date.addDays(-3) # Add a few days buffer at start
-        self.end_date = max_date.addDays(3) # Add a few days buffer at the end
+        self.start_date = min_date.addDays(-1) # Add a few days buffer at start
+        self.end_date = max_date.addDays(1) # Add a few days buffer at the end
 
     def draw_chart(self):
         """
@@ -287,6 +288,22 @@ class GanttChartWidget(QGraphicsView):
             bar_item.setFlag(QGraphicsItem.ItemIsSelectable) #Make it selectable
             bar_item.setZValue(1) # Bring to front for selection
             text_item.setZValue(2) # Text on top of bar
+
+    def set_animation_pipe(self):
+        """
+        Set the initial position for the pipe for the simulation
+        animation of the building.
+        """
+        self.pipe_item = self.scene.addLine(
+            0,
+            0,
+            0,
+            self.scene.sceneRect().height(),
+            QPen(QColor("red"), 3)
+        )
+        self.pipe_item.setPos(0, 0)
+        self.pipe_item.setZValue(9999)
+        self.pipe_item.hide()
 
     def mousePressEvent(self, event):
         """
