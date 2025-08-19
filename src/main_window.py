@@ -6,8 +6,9 @@ from PySide6.QtWidgets import (QDialog, QFileDialog, QHBoxLayout,
                                QVBoxLayout, QWidget)
 
 from src.gantt_chart_widget import GanttChartWidget
-from src.task_manager import TaskManager
+from src.simulation_manager import SimulationManager
 from src.task_dialog import TaskDialog
+from src.task_manager import TaskManager
 
 class MainWindow(QMainWindow):
     """
@@ -34,6 +35,8 @@ class MainWindow(QMainWindow):
         self.add_task_button = QPushButton("Add Task")
         self.edit_task_button = QPushButton("Edit Task")
         self.delete_task_button = QPushButton("Delete Task")
+        self.play_button = QPushButton("Play Simulation")
+        self.stop_button = QPushButton("Stop Simulation")
 
         button_layout.addWidget(self.open_file_button)
         button_layout.addWidget(self.save_file_button)
@@ -41,10 +44,14 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(self.add_task_button)
         button_layout.addWidget(self.edit_task_button)
         button_layout.addWidget(self.delete_task_button)
+        button_layout.addWidget(self.play_button)
+        button_layout.addWidget(self.stop_button)
         layout.addLayout(button_layout)
 
         self.gantt_chart_widget = GanttChartWidget(parent=self, task_manager=self.task_manager)
         layout.addWidget(self.gantt_chart_widget)
+
+        self.simulation_manager = SimulationManager(self.gantt_chart_widget, self.task_manager)
 
         # Connect buttons to methods
         self.open_file_button.clicked.connect(self.open_file)
@@ -53,6 +60,8 @@ class MainWindow(QMainWindow):
         self.add_task_button.clicked.connect(self.add_task)
         self.edit_task_button.clicked.connect(self.edit_task)
         self.delete_task_button.clicked.connect(self.delete_task)
+        self.play_button.clicked.connect(self.simulation_manager.start_simulation)
+        self.stop_button.clicked.connect(self.simulation_manager.stop_simulation)
 
         self.refresh_gantt_chart()
 
