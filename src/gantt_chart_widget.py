@@ -1,6 +1,6 @@
 from PySide6.QtCore import QDate, QPointF, QRectF, Qt
 from PySide6.QtGui import QBrush, QColor, QFont, QPen, QPolygonF
-from PySide6.QtWidgets import QGraphicsItem, QGraphicsScene, QGraphicsView
+from PySide6.QtWidgets import QGraphicsItem, QGraphicsRectItem, QGraphicsScene, QGraphicsView
 
 class GanttChartWidget(QGraphicsView):
     """
@@ -15,6 +15,7 @@ class GanttChartWidget(QGraphicsView):
 
         self.task_manager = task_manager
         self.tasks = []
+        self.task_graphic_items: dict[int, QGraphicsRectItem] = {}
         self.start_date = None
         self.end_date = None
         self.day_width = 50 # Pixels per day
@@ -59,6 +60,7 @@ class GanttChartWidget(QGraphicsView):
         """
         self.tasks = tasks_data
         self.scene.clear() # Clear existing items
+        self.task_graphic_items.clear()
 
         # if not self.tasks:
         #     return
@@ -288,6 +290,7 @@ class GanttChartWidget(QGraphicsView):
             bar_item.setFlag(QGraphicsItem.ItemIsSelectable) #Make it selectable
             bar_item.setZValue(1) # Bring to front for selection
             text_item.setZValue(2) # Text on top of bar
+            self.task_graphic_items[task.id] = bar_item
 
     def set_animation_pipe(self):
         """
