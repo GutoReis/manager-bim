@@ -1,5 +1,5 @@
 from PySide6.QtCore import QPointF, QRectF, Qt
-from PySide6.QtGui import QBrush, QColor, QFont, QPen, QPolygonF
+from PySide6.QtGui import QBrush, QColor, QFont, QPainterPath, QPen, QPolygonF
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsRectItem, QGraphicsScene, QGraphicsView
 
 class GanttChartWidget(QGraphicsView):
@@ -114,6 +114,8 @@ class GanttChartWidget(QGraphicsView):
         )
         arrow_pen.setCapStyle(Qt.RoundCap) # Rounded end for lines.
 
+        corner_radius = 4
+
         current_date = self.start_date
         while current_date <= self.end_date:
             x_pos = current_day_offset * self.day_width
@@ -158,11 +160,25 @@ class GanttChartWidget(QGraphicsView):
                 bar_width,
                 self.row_height - 20
             )
-            self.scene.addRect(
+            background_path = QPainterPath()
+            background_path.addRoundedRect(
                 bar_rect,
+                corner_radius,
+                corner_radius
+            )
+            background_item = self.scene.addPath(
+                background_path,
                 QPen(QColor('#cccccc')),
                 QBrush(QColor('#ADD8E6'))
-            ) # Light blue
+            )
+            background_item.setData(0, task.id)
+            background_item.setFlag(QGraphicsItem.ItemIsSelectable)
+            background_item.setZValue(1)
+            # self.scene.addRect(
+            #     bar_rect,
+            #     QPen(QColor('#cccccc')),
+            #     QBrush(QColor('#ADD8E6'))
+            # ) # Light blue
 
             ### Draw the progress bar
             progress_width = bar_width * progress
@@ -172,11 +188,23 @@ class GanttChartWidget(QGraphicsView):
                 progress_width,
                 self.row_height - 20
             )
-            self.scene.addRect(
+            progress_path = QPainterPath()
+            progress_path.addRoundedRect(
                 progress_rect,
+                corner_radius,
+                corner_radius
+            )
+            progress_item = self.scene.addPath(
+                progress_path,
                 QPen(QColor('#4682B4')),
                 QBrush(QColor('#4682B4'))
-            ) # Steel blue
+            )
+            progress_item.setZValue(2)
+            #self.scene.addRect(
+            #    progress_rect,
+            #    QPen(QColor('#4682B4')),
+            #    QBrush(QColor('#4682B4'))
+            #) # Steel blue
 
             ### Add task name text
             task_font = QFont('Inter', 9)
@@ -192,6 +220,24 @@ class GanttChartWidget(QGraphicsView):
                            ) / 2
             )
             text_item.setDefaultTextColor(QColor('black'))
+            # Store task ID with the graphics item for selection
+            text_item.setData(0, task.id) #Store the task ID in data row 0
+            highlight_path = QPainterPath()
+            highlight_path.addRoundedRect(
+                bar_rect,
+                corner_radius,
+                corner_radius
+            )
+            highlight_item = self.scene.addPath(
+                highlight_path,
+                QPen(Qt.NoPen),
+                QBrush(Qt.NoBrush)
+            )
+            highlight_item.setData(0, task.id)
+            highlight_item.setFlag(QGraphicsItem.ItemIsSelectable) #Make it selectable
+            highlight_item.setZValue(3) # Bring to front for selection
+            text_item.setZValue(3) # Text on top of bar
+            self.task_graphic_items[task.id] = highlight_item
 
             ### Draw the dependency
             if task.depends_on:
@@ -269,20 +315,6 @@ class GanttChartWidget(QGraphicsView):
                     QPen(arrow_pen.color()),
                     QBrush(arrow_pen.color())
                 )
-
-
-            # Store task ID with the graphics item for selection
-            text_item.setData(0, task.id) #Store the task ID in data row 0
-            bar_item = self.scene.addRect(
-                bar_rect,
-                QPen(Qt.NoPen),
-                QBrush(Qt.NoBrush)
-            )
-            bar_item.setData(0, task.id)
-            bar_item.setFlag(QGraphicsItem.ItemIsSelectable) #Make it selectable
-            bar_item.setZValue(1) # Bring to front for selection
-            text_item.setZValue(2) # Text on top of bar
-            self.task_graphic_items[task.id] = bar_item
 
     def mousePressEvent(self, event):
         """
