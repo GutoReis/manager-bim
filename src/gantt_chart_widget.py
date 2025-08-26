@@ -105,7 +105,6 @@ class GanttChartWidget(QGraphicsView):
         # Draw timeline and date labels
         current_day_offset = 0
         date_font = QFont('Inter', 8)
-        date_pen = QPen(QColor('#666666'))
 
         # Arrows for dependency configurations
         arrow_pen = QPen(
@@ -174,11 +173,6 @@ class GanttChartWidget(QGraphicsView):
             background_item.setData(0, task.id)
             background_item.setFlag(QGraphicsItem.ItemIsSelectable)
             background_item.setZValue(1)
-            # self.scene.addRect(
-            #     bar_rect,
-            #     QPen(QColor('#cccccc')),
-            #     QBrush(QColor('#ADD8E6'))
-            # ) # Light blue
 
             ### Draw the progress bar
             progress_width = bar_width * progress
@@ -200,11 +194,6 @@ class GanttChartWidget(QGraphicsView):
                 QBrush(QColor('#4682B4'))
             )
             progress_item.setZValue(2)
-            #self.scene.addRect(
-            #    progress_rect,
-            #    QPen(QColor('#4682B4')),
-            #    QBrush(QColor('#4682B4'))
-            #) # Steel blue
 
             ### Add task name text
             task_font = QFont('Inter', 9)
@@ -242,8 +231,6 @@ class GanttChartWidget(QGraphicsView):
             ### Draw the dependency
             if task.depends_on:
                 print(task.depends_on)
-                # TODO: Create a method in task_item that returns
-                # the dependency data for drawing the dependency
                 dependent_id = int(task.depends_on.split("-")[0].strip())
                 dependent_task = self.task_manager.get_task(dependent_id)
 
@@ -266,7 +253,6 @@ class GanttChartWidget(QGraphicsView):
 
                 # Define the break L-shaped line
                 horizontal_offset = 10
-                vertical_offset = 10
 
                 break_start_x = start_x_arrow + horizontal_offset
                 break_start_y = start_y_arrow
