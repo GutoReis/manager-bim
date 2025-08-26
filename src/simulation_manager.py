@@ -60,6 +60,16 @@ class SimulationManager:
         self.update_pipe_height()
         self.pipe_item.setX(self.current_simulation_x)
 
+        # Ensure the pipe is visible in the view
+        # Scroll when the pipe is 25% from edge
+        scroll_margin_x = self.gantt_widget.viewport().width() * 0.25
+        scroll_margin_y = 0 # No need for vertical scroll
+        self.gantt_widget.ensureVisible(
+            self.pipe_item,
+            scroll_margin_x,
+            scroll_margin_y
+        )
+
         # Stop condition
         if self.current_simulation_x >= self.gantt_widget.scene.sceneRect().width():
             self.stop_simulation()
