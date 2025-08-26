@@ -1,4 +1,4 @@
-from PySide6.QtCore import QDate, QPointF, QRectF, Qt
+from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QBrush, QColor, QFont, QPen, QPolygonF
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsRectItem, QGraphicsScene, QGraphicsView
 
@@ -11,7 +11,6 @@ class GanttChartWidget(QGraphicsView):
         super().__init__(parent)
         self.scene = QGraphicsScene(self)
         self.setScene(self.scene)
-        #self.setRenderHint(Qt.Antialiasing) # For smoother graphics
 
         self.task_manager = task_manager
         self.tasks = []
@@ -62,12 +61,8 @@ class GanttChartWidget(QGraphicsView):
         self.scene.clear() # Clear existing items
         self.task_graphic_items.clear()
 
-        # if not self.tasks:
-        #     return
-
         self.calculate_date_range()
         self.draw_chart()
-        self.set_animation_pipe()
 
     def calculate_date_range(self):
         """
@@ -78,8 +73,6 @@ class GanttChartWidget(QGraphicsView):
         Obs.: Tasks may not be ordered by date.
         """
         if not self.tasks:
-            self.start_date = QDate.currentDate()
-            self.end_date = QDate.currentDate().addDays(7)
             return
 
         min_date = self.tasks[0].start_date
@@ -92,7 +85,7 @@ class GanttChartWidget(QGraphicsView):
                 max_date = task.end_date
 
         self.start_date = min_date.addDays(-1) # Add a few days buffer at start
-        self.end_date = max_date.addDays(1) # Add a few days buffer at the end
+        self.end_date = max_date.addDays(2) # Add a few days buffer at the end
 
     def draw_chart(self):
         """
@@ -140,7 +133,6 @@ class GanttChartWidget(QGraphicsView):
         for i, task in enumerate(self.tasks):
             task_name = task.name
             start_date = task.start_date
-            end_date = task.end_date
             progress = task.progress #0.0 (0%) to 1.0 (100%)
             progress_str = f"{round(progress, 2) * 100}%"
 
@@ -291,22 +283,6 @@ class GanttChartWidget(QGraphicsView):
             bar_item.setZValue(1) # Bring to front for selection
             text_item.setZValue(2) # Text on top of bar
             self.task_graphic_items[task.id] = bar_item
-
-    def set_animation_pipe(self):
-        """
-        Set the initial position for the pipe for the simulation
-        animation of the building.
-        """
-        self.pipe_item = self.scene.addLine(
-            0,
-            0,
-            0,
-            self.scene.sceneRect().height(),
-            QPen(QColor("red"), 3)
-        )
-        self.pipe_item.setPos(0, 0)
-        self.pipe_item.setZValue(9999)
-        self.pipe_item.hide()
 
     def mousePressEvent(self, event):
         """
