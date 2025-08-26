@@ -172,7 +172,7 @@ class Toolbar():
         """
         dialog = TaskDialog(
             current_tasks_list=self.main_window.task_manager.get_all_tasks_str(),
-            parent=self
+            parent=self.main_window
         )
         if dialog.exec() == QDialog.Accepted:
             task_data = dialog.get_task_data()
