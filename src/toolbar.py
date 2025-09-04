@@ -20,7 +20,7 @@ class Toolbar():
         self.toolbar.setIconSize(QSize(16, 16))
 
         new_project_action = QAction(
-            QIcon("src/assets/open_file.png"),
+            QIcon("src/assets/new_project.svg"),
             "New Project",
             self.main_window
         )
@@ -30,7 +30,7 @@ class Toolbar():
         self.toolbar.addAction(new_project_action)
 
         open_file_action = QAction(
-            QIcon("src/assets/open_file.png"),
+            QIcon("src/assets/open_file.svg"),
             "Open File",
             self.main_window
         )
@@ -40,7 +40,7 @@ class Toolbar():
         self.toolbar.addAction(open_file_action)
 
         save_file_action = QAction(
-            QIcon("src/assets/save_file.png"),
+            QIcon("src/assets/save_file.svg"),
             "Save file",
             self.main_window
         )
@@ -50,7 +50,7 @@ class Toolbar():
         self.toolbar.addAction(save_file_action)
 
         save_new_action = QAction(
-            QIcon("src/assets/save_new.png"),
+            QIcon("src/assets/save_new.svg"),
             "Save as new",
             self.main_window
         )
@@ -60,7 +60,7 @@ class Toolbar():
         self.toolbar.addAction(save_new_action)
 
         add_task_action = QAction(
-            QIcon("src/assets/add_task.png"),
+            QIcon("src/assets/add_task.svg"),
             "Add task",
             self.main_window
         )
@@ -70,7 +70,7 @@ class Toolbar():
         self.toolbar.addAction(add_task_action)
 
         edit_task_action = QAction(
-            QIcon("src/assets/edit_task.png"),
+            QIcon("src/assets/edit_task.svg"),
             "Edit task",
             self.main_window
         )
@@ -80,7 +80,7 @@ class Toolbar():
         self.toolbar.addAction(edit_task_action)
 
         delete_task_action = QAction(
-            QIcon("src/assets/delete_task.png"),
+            QIcon("src/assets/delete_task.svg"),
             "Delete task",
             self.main_window
         )
@@ -90,7 +90,7 @@ class Toolbar():
         self.toolbar.addAction(delete_task_action)
 
         play_sim_action = QAction(
-            QIcon("src/assets/play_sim.png"),
+            QIcon("src/assets/start_sim.svg"),
             "Play Sim",
             self.main_window
         )
@@ -100,7 +100,7 @@ class Toolbar():
         self.toolbar.addAction(play_sim_action)
 
         stop_sim_action = QAction(
-            QIcon("src/assets/stop_sim.png"),
+            QIcon("src/assets/stop_sim.svg"),
             "Stop Sim",
             self.main_window
         )
