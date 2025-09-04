@@ -70,6 +70,13 @@ class TaskManager():
             return True
         return False
 
+    def remove_all_tasks(self):
+        """
+        Remove all tasks from the list and reset the id counter.
+        """
+        self._tasks.clear() # Clear existing tasks
+        TaskItem._next_id = 0 #Reset ID counter
+
     def load_from_raw_data(self, raw_data: list[dict]):
         """
         Loads tasks from a list of raw dictionaries.
