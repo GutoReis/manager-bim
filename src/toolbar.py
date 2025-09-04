@@ -19,6 +19,16 @@ class Toolbar():
         self.toolbar = QToolBar("Main")
         self.toolbar.setIconSize(QSize(16, 16))
 
+        new_project_action = QAction(
+            QIcon("src/assets/open_file.png"),
+            "New Project",
+            self.main_window
+        )
+        new_project_action.setStatusTip("New Project")
+        new_project_action.triggered.connect(self.new_project)
+        new_project_action.setCheckable(True)
+        self.toolbar.addAction(new_project_action)
+
         open_file_action = QAction(
             QIcon("src/assets/open_file.png"),
             "Open File",
@@ -98,6 +108,26 @@ class Toolbar():
         stop_sim_action.triggered.connect(self.main_window.simulation_manager.stop_simulation)
         stop_sim_action.setCheckable(True)
         self.toolbar.addAction(stop_sim_action)
+
+    def new_project(self):
+        """
+        Clear the scene and start new project.
+        """
+        if not self.main_window.task_manager.get_all_tasks():
+            return
+        reply = QMessageBox.question(
+            self.main_window,
+            "New Project",
+            f"Are you sure you want to start a new project?",
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+        )
+        if reply == QMessageBox.No:
+            return
+        self.main_window.task_manager.remove_all_tasks()
+        self.main_window.gantt_chart_widget.start_date = None
+        self.main_window.gantt_chart_widget.end_date = None
+        self.main_window.refresh_gantt_chart()
+
 
     def open_file(self):
         """
