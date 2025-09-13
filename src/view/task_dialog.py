@@ -1,7 +1,7 @@
 from PySide6.QtCore import QDate
 from PySide6.QtWidgets import QComboBox, QDateEdit, QDialog, QDoubleSpinBox, QFormLayout, QHBoxLayout, QLineEdit, QPushButton
 
-from src.task_item import TaskItem
+from src.model.task_item import TaskItem
 
 class TaskDialog(QDialog):
     """

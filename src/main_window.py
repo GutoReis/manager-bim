@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget)
 
-from src.gantt_chart_widget import GanttChartWidget
-from src.simulation_manager import SimulationManager
-from src.task_manager import TaskManager
-from src.toolbar import Toolbar
+from src.view.gantt_chart_widget import GanttChartWidget
+from src.controller.simulation_manager import SimulationManager
+from src.controller.task_manager import TaskManager
+from src.view.toolbar import Toolbar
 
 class MainWindow(QMainWindow):
     """

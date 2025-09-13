@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QMessageBox
 
-from src.task_item import TaskItem
+from src.model.task_item import TaskItem
 
 class TaskManager():
     """
