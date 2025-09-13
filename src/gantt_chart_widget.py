@@ -168,7 +168,7 @@ class GanttChartWidget(QGraphicsView):
             background_item = self.scene.addPath(
                 background_path,
                 QPen(QColor('#cccccc')),
-                QBrush(QColor('#ADD8E6'))
+                QBrush(QColor('#999999'))
             )
             background_item.setData(0, task.id)
             background_item.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -190,13 +190,13 @@ class GanttChartWidget(QGraphicsView):
             )
             progress_item = self.scene.addPath(
                 progress_path,
-                QPen(QColor('#4682B4')),
-                QBrush(QColor('#4682B4'))
+                QPen(QColor('#78EC7C')),
+                QBrush(QColor('#78EC7C'))
             )
             progress_item.setZValue(2)
 
             ### Add task name text
-            task_font = QFont('Inter', 9)
+            task_font = QFont('Inter', 9, QFont.Bold)
             text_item = self.scene.addText(
                 f"{task_name} - {progress_str}",
                 task_font
