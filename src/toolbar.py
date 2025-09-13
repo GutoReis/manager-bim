@@ -17,7 +17,7 @@ class Toolbar():
         self.filename = "" # Filename to simplify save action (quick save option)
         self.main_window = main_window
         self.toolbar = QToolBar("Main")
-        self.toolbar.setIconSize(QSize(16, 16))
+        self.toolbar.setIconSize(QSize(22, 22))
 
         new_project_action = QAction(
             QIcon("src/assets/new_project.svg"),
@@ -26,7 +26,6 @@ class Toolbar():
         )
         new_project_action.setStatusTip("New Project")
         new_project_action.triggered.connect(self.new_project)
-        new_project_action.setCheckable(True)
         self.toolbar.addAction(new_project_action)
 
         open_file_action = QAction(
@@ -36,7 +35,6 @@ class Toolbar():
         )
         open_file_action.setStatusTip("Open File")
         open_file_action.triggered.connect(self.open_file)
-        open_file_action.setCheckable(True)
         self.toolbar.addAction(open_file_action)
 
         save_file_action = QAction(
@@ -46,7 +44,6 @@ class Toolbar():
         )
         save_file_action.setStatusTip("Save File")
         save_file_action.triggered.connect(self.save_file)
-        save_file_action.setCheckable(True)
         self.toolbar.addAction(save_file_action)
 
         save_new_action = QAction(
@@ -56,7 +53,6 @@ class Toolbar():
         )
         save_new_action.setStatusTip("Save as new")
         save_new_action.triggered.connect(self.save_as_new_file)
-        save_new_action.setCheckable(True)
         self.toolbar.addAction(save_new_action)
 
         add_task_action = QAction(
@@ -66,7 +62,6 @@ class Toolbar():
         )
         add_task_action.setStatusTip("Add new task")
         add_task_action.triggered.connect(self.add_task)
-        add_task_action.setCheckable(True)
         self.toolbar.addAction(add_task_action)
 
         edit_task_action = QAction(
@@ -76,7 +71,6 @@ class Toolbar():
         )
         edit_task_action.setStatusTip("Edit task")
         edit_task_action.triggered.connect(self.edit_task)
-        edit_task_action.setCheckable(True)
         self.toolbar.addAction(edit_task_action)
 
         delete_task_action = QAction(
@@ -86,7 +80,6 @@ class Toolbar():
         )
         delete_task_action.setStatusTip("Delete task")
         delete_task_action.triggered.connect(self.delete_task)
-        delete_task_action.setCheckable(True)
         self.toolbar.addAction(delete_task_action)
 
         play_sim_action = QAction(
@@ -96,7 +89,6 @@ class Toolbar():
         )
         play_sim_action.setStatusTip("Play simulation")
         play_sim_action.triggered.connect(self.main_window.simulation_manager.start_simulation)
-        play_sim_action.setCheckable(True)
         self.toolbar.addAction(play_sim_action)
 
         stop_sim_action = QAction(
@@ -106,7 +98,6 @@ class Toolbar():
         )
         stop_sim_action.setStatusTip("Stop simulation")
         stop_sim_action.triggered.connect(self.main_window.simulation_manager.stop_simulation)
-        stop_sim_action.setCheckable(True)
         self.toolbar.addAction(stop_sim_action)
 
     def new_project(self):
