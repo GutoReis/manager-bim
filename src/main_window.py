@@ -5,15 +5,15 @@ from src.controller.simulation_manager import SimulationManager
 from src.controller.task_manager import TaskManager
 from src.view.toolbar import Toolbar
 
-#class MainWindow(QMainWindow):
-class MainWindow(QWidget):
+class MainWindow(QMainWindow):
+#class MainWindow(QWidget):
     """
     Main window for the Gantt chart application.
     """
     def __init__(self):
         super().__init__()
-        #self.setWindowTitle('ManagerBIM')
-        #self.setGeometry(100, 100, 1000, 600) # x,y,width,height
+        self.setWindowTitle('ManagerBIM')
+        self.setGeometry(100, 100, 1000, 600) # x,y,width,height
 
         self.task_manager = TaskManager()
 
