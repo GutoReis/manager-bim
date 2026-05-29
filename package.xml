@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <package format="1">
     <name>ManagerBIM</name>
-    <description>Manager BIM is a FreeCAD dedicated workbench.</description>
+    <version>1.0.0</version>
+    <description>Manager BIM is a FreeCAD dedicated workbench that allows a building project to be managed with a Gantt chart.</description>
+    <maintainer email="gutoreis@users.noreply.github.com">Guto Reis</maintainer>
+    <license>GPL-3.0</license>
+    <url type="repository">https://github.com/GutoReis/manager-bim</url>
     <content>
         <workbench>
             <classname>ManagerBIMWorkbench</classname>
