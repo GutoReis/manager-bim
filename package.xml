@@ -1,5 +1,10 @@
-<content>
-    <workbench>
-        <classname>ManagerBIMWorkbench</classname>
-    </workbench>
-</content>
+<?xml version="1.0" encoding="UTF-8" ?>
+<package format="1">
+    <name>ManagerBIM</name>
+    <description>Manager BIM is a FreeCAD dedicated workbench.</description>
+    <content>
+        <workbench>
+            <classname>ManagerBIMWorkbench</classname>
+        </workbench>
+    </content>
+</package>
