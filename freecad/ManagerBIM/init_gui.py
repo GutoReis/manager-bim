@@ -2,7 +2,7 @@ import os
 
 import FreeCADGui
 
-_ADDON_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ADDON_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _ICON = os.path.join(_ADDON_ROOT, "Resources", "Icons", "logo_ManagerBIM.svg")
 
 class ManagerBIMWorkbench(FreeCADGui.Workbench):
